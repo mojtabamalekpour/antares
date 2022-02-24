@@ -31,6 +31,11 @@ namespace ns3 {
 
 class TraceContainer;
 
+struct BinaryCounter{
+	uint32_t m_mutex_1=0;
+	uint32_t m_mutex_2=0;
+	int32_t counter=0;
+};
 /**
  * \ingroup queue
  *
@@ -71,17 +76,17 @@ public:
   void SetTh (uint32_t th);
 
   uint32_t m_bytesInQueue;
-  int32_t m_binaryCounter[10];
-  std::list <uint32_t> m_activityMonitor;
+
+//  std::list <uint32_t> m_activityMonitor;
 //  uint32_t m_bytesInQueue1;
 //  uint32_t m_bytesInQueue2;
 //  uint32_t m_bytesInQueuePERQ[1001];
-  void setBinaryCounter(int x);
+//  void setBinaryCounter(int x);
 protected:
   int bottleneck;
   friend class PointToPointNetDevice;
   virtual bool DoEnqueue (Ptr<Packet> p);
-  void ResetActivityMonitor(void);
+//  void ResetActivityMonitor(void);
 
   virtual Ptr<Packet> DoDequeue (void);
   virtual Ptr<const Packet> DoPeek (void) const;
@@ -107,8 +112,8 @@ protected:
   void Mark (Ptr<Packet> p);
   uint32_t m_th;
   uint32_t m_isServer;
-	uint32_t m_mutex_1;
-	uint32_t m_mutex_2;
+
+  	BinaryCounter m_binaryCounter[10];
 	std::ofstream myfile;
 
 };

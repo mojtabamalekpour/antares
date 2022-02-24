@@ -313,17 +313,17 @@ void Build_Topology()
 	Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 
 }
-void SetupServerTraffic (Ptr<Node> Nd, uint16_t appPort, Time startTime ,uint8_t tenant,uint8_t flow)
+void SetupServerTraffic (Ptr<Node> Nd, uint16_t appPort, Time startTime,Time endTime ,uint8_t tenant,uint8_t flow)
 {
 	PacketSinkHelper sink ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), appPort));
 	sink.SetAttribute ("FlowID", UintegerValue (flow));
 	sink.SetAttribute ("TenantID", UintegerValue (tenant));
 	ApplicationContainer sinkApps = sink.Install (Nd);
 	sinkApps.Start(startTime);
-	sinkApps.Stop(startTime+Seconds(1));
+	sinkApps.Stop(endTime);
 }
 
-void SetupClientTraffic(Ptr<Node> Nd,Ptr<Node> ServerNode, uint32_t txsize, uint16_t appPort, Time startTime,uint8_t tenant,uint8_t flow){
+void SetupClientTraffic(Ptr<Node> Nd,Ptr<Node> ServerNode, uint32_t txsize, uint16_t appPort, Time startTime,Time endTime,uint8_t tenant,uint8_t flow){
 
 	BulkSendHelper source ("ns3::TcpSocketFactory",InetSocketAddress(ServerNode->GetObject<Ipv4>()->GetAddress(1,0).GetLocal(), appPort));
 	source.SetAttribute ("MaxBytes", UintegerValue (0)); //txsize
@@ -332,7 +332,7 @@ void SetupClientTraffic(Ptr<Node> Nd,Ptr<Node> ServerNode, uint32_t txsize, uint
 	source.SetAttribute ("TenantID", UintegerValue (tenant));
 	ApplicationContainer sourceApps = source.Install (Nd);
 	sourceApps.Start(startTime);
-	sourceApps.Stop(startTime+Seconds(1));
+	sourceApps.Stop(endTime);
 }
 
 double  AppDelay(){
@@ -448,14 +448,21 @@ void Setup_Workload(){
 	int m_tenant = 1;
 	int m_flow_counter=1;
 
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0),m_tenant,m_flow_counter);
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0),Seconds(0.25), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0),Seconds(0.25),m_tenant,m_flow_counter);
+
+//	m_tenant++;
+	m_flow_counter++;
+
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0),Seconds(0.25), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0),Seconds(0.25),m_tenant,m_flow_counter);
 
 	m_tenant++;
 	m_flow_counter++;
 
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0.5), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0.5),m_tenant,m_flow_counter);
+
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0.05),Seconds(0.20), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0.05),Seconds(0.20),m_tenant,m_flow_counter);
 
 //	m_tenant = 3;
 //	m_flow_counter++;
