@@ -85,7 +85,7 @@ SimpleDCTCPQueue::SimpleDCTCPQueue () :
 	for (int i = 0; i < 10; ++i) {
 		m_binaryCounter[i].counter=0;
 	}
-	myfile.open ("example.txt");
+	myfile.open ("log");
 //	Simulator::Schedule(MilliSeconds(1),&SimpleDCTCPQueue::ResetActivityMonitor,this);
 //	Simulator::Schedule(MicroSeconds(1),&SimpleDCTCPQueue::ResetBinaryCounter,this);
 }
@@ -443,9 +443,14 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 		if(classID == 1){
 			m_binaryCounter[1].counter+=p->GetSize();
 			m_binaryCounter[1].m_mutex_1=1;
-		}else{
+		}
+		if(classID == 2){
 			m_binaryCounter[1].counter-=p->GetSize();
 			m_binaryCounter[1].m_mutex_2=1;
+		}
+		if(classID == 3){
+			m_binaryCounter[2].counter-=p->GetSize();
+			m_binaryCounter[2].m_mutex_2=1;
 		}
 		//			cout<< " ClassID " << classID <<  " IsServer " << m_isServer << "  BinaryCounter: " << m_binaryCounter[1] << endl;
 
@@ -463,10 +468,10 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 			m_binaryCounter[1].m_mutex_2=0;
 		}
 
-//		if(Simulator::Now ().GetDouble() > Seconds(0.048).GetDouble())
-//		{
+		if(Simulator::Now ().GetDouble() > Seconds(0.048).GetDouble())
+		{
 			  myfile <<  " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID <<  " mutex: " << m_binaryCounter[1].m_mutex_1 <<  ":" << m_binaryCounter[1].m_mutex_2 << "  BinaryCounter: " << m_binaryCounter[1].counter << " Tresh " << thresh <<  " bytesInQueue " << m_bytesInQueue <<  endl;
-//		}
+		}
 		if (m_bytesInQueue + p->GetSize () >= m_th*0.8)
 		{
 
@@ -518,8 +523,6 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 		}
 
 	}
-
-
 
 	if (m_mode == QUEUE_MODE_BYTES && (m_bytesInQueue + p->GetSize () >= m_maxBytes))
 	{

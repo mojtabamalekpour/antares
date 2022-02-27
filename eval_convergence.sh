@@ -7,8 +7,9 @@ do
 	t=`cat a | grep "TIME: $i" | grep "TENATNT:"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
 	t1=`cat a | grep "TIME: $i" | grep "TENATNT: 1"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
 	t2=`cat a | grep "TIME: $i" | grep "TENATNT: 2"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
+	t3=`cat a | grep "TIME: $i" | grep "TENATNT: 3"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
 
-	echo $i $t1 $t2 >> /tmp/tt
+	echo $i $t1 $t2 $t3 >> /tmp/tt
 done
 
 
@@ -47,6 +48,7 @@ set xtics  nomirror
 set ytics  nomirror
 plot \
 	'/tmp/tt' using 1:2 with linespoints pt 7 dashtype 1 lc rgb '#000000' lw 5 title 'Antares (T1)',\
-	'/tmp/tt' using 1:3 with linespoints pt 13 dashtype '_' lc rgb '#FF0000' lw 5 title 'Antares (T2)'
+	'/tmp/tt' using 1:3 with linespoints pt 13 dashtype '_' lc rgb '#FF0000' lw 5 title 'Antares (T2)',\
+	'/tmp/tt' using 1:4 with linespoints pt 11 dashtype '_._' lc rgb '#00FF00' lw 5 title 'Antares (T3)'
 EOFMarker
 
