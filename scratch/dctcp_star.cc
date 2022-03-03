@@ -447,34 +447,45 @@ void Setup_Workload(){
 
 	int m_tenant = 1;
 	int m_flow_counter=1;
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0),Seconds(0.25), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0),Seconds(0.25),m_tenant,m_flow_counter);
 
-//	m_tenant++;
-	m_flow_counter++;
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0),Seconds(0.25), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0),Seconds(0.25),m_tenant,m_flow_counter);
-
-	//	m_tenant++;
-	m_flow_counter++;
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0),Seconds(0.25), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0),Seconds(0.25),m_tenant,m_flow_counter);
-
-	m_tenant++;
-	m_flow_counter++;
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0.05),Seconds(0.20), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0.05),Seconds(0.20),m_tenant,m_flow_counter);
+	////////////////////////////////////
+	double startTime=0;
+	double endTime=0.5;
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
 
 	m_flow_counter++;
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0.05),Seconds(0.20), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0.05),Seconds(0.20),m_tenant,m_flow_counter);
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
-
-	m_tenant++;
 	m_flow_counter++;
-	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(0.1),Seconds(0.15), m_tenant,m_flow_counter);
-	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(0.1),Seconds(0.15),m_tenant,m_flow_counter);
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
+
+	////////////////////////////////////
+		startTime=0.1;
+		endTime=0.4;
+		m_tenant++;
+
+
+	m_flow_counter++;
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
+
+
+	m_flow_counter++;
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
+
+	////////////////////////////////////
+		startTime=0.2;
+		endTime=0.3;
+		m_tenant++;
+
+	m_flow_counter++;
+	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
+	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
 //	m_tenant = 3;
 //	m_flow_counter++;
