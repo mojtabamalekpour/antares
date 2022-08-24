@@ -32,8 +32,8 @@ uint32_t        NumberofRacks             = 2;
 uint32_t        NumberofSpineSwitches     = 1;
 uint32_t        Scale                     = 1;
 double          load                      = 0.6;
-uint32_t        threshold                 = 4e5;
-uint32_t        queueBytes                = 4e7;      // Number of bytes per queue port
+uint32_t        threshold                 = 2e5;
+uint32_t        queueBytes                = 4e5;      // Number of bytes per queue port
 uint32_t        initCwnd                  = 10;         // TCP Initial Congestion Window
 double          minRto                    = 10000e-6;
 uint32_t        segmentSize               = 1460;
@@ -454,6 +454,10 @@ void Setup_Workload(){
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
+	////////////////////////////////////
+	startTime=0.1;
+	endTime=0.4;
+	m_tenant++;
 
 	m_flow_counter++;
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
@@ -464,11 +468,9 @@ void Setup_Workload(){
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
 	////////////////////////////////////
-		startTime=0.1;
-		endTime=0.4;
-		m_tenant++;
-
-
+	startTime=0.2;
+	endTime=0.3;
+	m_tenant++;
 	m_flow_counter++;
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
@@ -478,10 +480,6 @@ void Setup_Workload(){
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
-	////////////////////////////////////
-		startTime=0.2;
-		endTime=0.3;
-		m_tenant++;
 
 	m_flow_counter++;
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);

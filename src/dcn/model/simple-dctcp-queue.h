@@ -114,7 +114,8 @@ protected:
   uint32_t m_isServer;
 
   	BinaryCounter m_binaryCounter[10];
-	std::ofstream myfile;
+  	uint32_t inBount;
+  	std::ofstream myfile;
 
 };
 

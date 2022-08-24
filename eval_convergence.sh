@@ -1,13 +1,16 @@
 #!/bin/bash
+
+a=$1
+
 echo > /tmp/tt
-cat a | grep "TENATNT:" |awk '{printf "%.2f\n", $2}'| uniq > /tmp/lst
+cat $a | grep "TENATNT:" |awk '{printf "%.2f\n", $2}'| uniq > /tmp/lst
 
 for i in `cat /tmp/lst`
 do
-	t=`cat a | grep "TIME: $i" | grep "TENATNT:"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
-	t1=`cat a | grep "TIME: $i" | grep "TENATNT: 1"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
-	t2=`cat a | grep "TIME: $i" | grep "TENATNT: 2"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
-	t3=`cat a | grep "TIME: $i" | grep "TENATNT: 3"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
+	t=`cat $a | grep "TIME: $i" | grep "TENATNT:"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
+	t1=`cat $a | grep "TIME: $i" | grep "TENATNT: 1"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
+	t2=`cat $a | grep "TIME: $i" | grep "TENATNT: 2"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
+	t3=`cat $a | grep "TIME: $i" | grep "TENATNT: 3"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
 
 	echo $i $t1 $t2 $t3 >> /tmp/tt
 done

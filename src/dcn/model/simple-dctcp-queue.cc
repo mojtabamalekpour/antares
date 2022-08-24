@@ -79,7 +79,8 @@ SimpleDCTCPQueue::SimpleDCTCPQueue () :
 			m_maxlevels(97),
 			nodenumber(0),
 			m_max_tocken(5),
-			nodeport(0)
+			nodeport(0),
+			inBount(0)
 {
 	NS_LOG_FUNCTION_NOARGS ();
 	for (int i = 0; i < 10; ++i) {
@@ -434,83 +435,118 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 
 
 	int32_t DropThresh=m_maxBytes;
-	int32_t thresh=10;
-
-	if (m_bytesInQueue + p->GetSize () >= m_th)
-	{
-
-		if(classID < 100 && p->GetSize ()!=42 && m_isServer == 0){
-
-			m_binaryCounter[1].counter+=1;
-			m_binaryCounter[2].counter+=1;
-			m_binaryCounter[3].counter+=1;
-
-			if(classID == 1){
-				m_binaryCounter[1].counter-=2;
-			}
-			if(classID == 2){
-				m_binaryCounter[2].counter-=2;
-			}
-			if(classID == 3){
-				m_binaryCounter[3].counter-=2;
-			}
-
-//					myfile <<  " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID <<  "  BinaryCounter1: " << m_binaryCounter[1].counter << "  BinaryCounter2: " << m_binaryCounter[2].counter << "  BinaryCounter3: " << m_binaryCounter[3].counter << " Tresh " << thresh <<  " bytesInQueue " << m_bytesInQueue <<  endl;
-
-			if(m_binaryCounter[1].counter > thresh){
-				m_binaryCounter[1].counter=0;
-			}
-
-			if(m_binaryCounter[2].counter > thresh){
-				m_binaryCounter[2].counter=0;
-			}
-
-			if(m_binaryCounter[3].counter > thresh){
-				m_binaryCounter[3].counter=0;
-			}
+	int32_t thresh=m_th;
+	int booli=0;
 
 
-			if(m_binaryCounter[1].counter < (0-thresh)){
-				myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << "  BinaryCounter: " << m_binaryCounter[1].counter << " MARK " << endl;
-				Mark (p);
-				m_binaryCounter[1].counter=0;
-			}
-
-			if(m_binaryCounter[2].counter < (0-thresh)){
-				myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << "  BinaryCounter: " << m_binaryCounter[1].counter << " MARK " << endl;
-				Mark (p);
-				m_binaryCounter[2].counter=0;
-			}
-			if(m_binaryCounter[3].counter < (0-thresh)){
-				myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << "  BinaryCounter: " << m_binaryCounter[1].counter << " MARK " << endl;
-				Mark (p);
-				m_binaryCounter[3].counter=0;
-			}
-
-
-			//		if(m_binaryCounter[1].counter < (0-DropThresh)){
-			////			myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[1].m_mutex_1<< ":" << m_binaryCounter[1].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[1].counter << " MARK " << endl;
-			//			Drop (p);
-			//			m_binaryCounter[1].counter=0;
-			//		}
-			//
-			//		if(m_binaryCounter[2].counter < (0-DropThresh)){
-			////			myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[2].m_mutex_1<< ":" << m_binaryCounter[2].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[2].counter << " MARK " << endl;
-			//			Drop (p);
-			//			m_binaryCounter[2].counter=0;
-			//		}
-			//		if(m_binaryCounter[3].counter < (0-DropThresh)){
-			////			myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[2].m_mutex_1<< ":" << m_binaryCounter[2].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[2].counter << " MARK " << endl;
-			//			Drop (p);
-			//			m_binaryCounter[3].counter=0;
-			//		}
-
-
-
-
+	if(classID < 100 && p->GetSize ()!=42 && m_isServer == 0){
+		inBount+=p->GetSize();
+		if(inBount > DropThresh){
+			inBount=0;
 		}
 
+
+		m_binaryCounter[classID].counter+=p->GetSize();
+
+
+//		if(Simulator::Now ().GetDouble() > Seconds(0.05).GetDouble()){
+//					cout<< " TIME: " << Simulator::Now ().GetSeconds ()<< " inBount: " << inBount <<  "  BinaryCounter1: " << m_binaryCounter[1].counter << "  BinaryCounter2: " << m_binaryCounter[2].counter << "  BinaryCounter3: " << m_binaryCounter[3].counter <<  endl;
+//				}
+
+
+		if(inBount == m_binaryCounter[classID].counter && m_binaryCounter[classID].counter > 20000){
+			inBount=0;
+			m_binaryCounter[classID].counter=0;
+		}
+
+
+
+
+		if(inBount-m_binaryCounter[classID].counter > thresh){
+			Mark (p);
+			m_binaryCounter[classID].counter=0;
+		}
+
+
+//		myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[1].m_mutex_1<< ":" << m_binaryCounter[1].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[1].counter << " MARK " << endl;
+
+//		m_binaryCounter[1].counter+=p->GetSize();
+//		m_binaryCounter[2].counter+=p->GetSize();
+//		m_binaryCounter[3].counter+=p->GetSize();
+
+//		int x=1;
+//		if(Simulator::Now ().GetDouble() > Seconds(0.05).GetDouble()){
+//			x=2;
+//		}
+//		if(Simulator::Now ().GetDouble() > Seconds(0.1).GetDouble()){
+//			x=3;
+//		}
+
+//
+//		if(Simulator::Now ().GetDouble() > Seconds(0.1).GetDouble()){
+//			myfile <<  " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID <<  "  BinaryCounter1: " << m_binaryCounter[1].counter << "  BinaryCounter2: " << m_binaryCounter[2].counter << "  BinaryCounter3: " << m_binaryCounter[3].counter << " Tresh " << thresh <<  " bytesInQueue " << m_bytesInQueue <<  endl;
+//		}
+//
+//
+//		if(m_binaryCounter[1].counter > thresh){
+//			m_binaryCounter[1].counter=0;
+//		}
+//
+//		if(m_binaryCounter[2].counter > thresh){
+//			m_binaryCounter[2].counter=0;
+//		}
+//
+//		if(m_binaryCounter[3].counter > thresh){
+//			m_binaryCounter[3].counter=0;
+//		}
+//
+//
+//
+//
+//
+//
+////					if(m_binaryCounter[1].counter < (0-DropThresh)){
+////						myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[1].m_mutex_1<< ":" << m_binaryCounter[1].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[1].counter << " MARK " << endl;
+////						Drop (p);
+////						m_binaryCounter[1].counter=0;
+////					}
+////
+////					if(m_binaryCounter[2].counter < (0-DropThresh)){
+////						myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[2].m_mutex_1<< ":" << m_binaryCounter[2].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[2].counter << " MARK " << endl;
+////						Drop (p);
+////						m_binaryCounter[2].counter=0;
+////					}
+////					if(m_binaryCounter[3].counter < (0-DropThresh)){
+////						myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[3].m_mutex_1<< ":" << m_binaryCounter[2].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[2].counter << " MARK " << endl;
+////						Drop (p);
+////						m_binaryCounter[3].counter=0;
+////					}
+//
+//
+//		if(m_binaryCounter[1].counter < (0-thresh)){
+////			myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << "  BinaryCounter: " << m_binaryCounter[classID].counter << " MARK " << endl;
+//			booli=1;
+//			Mark (p);
+//			m_binaryCounter[1].counter=0;
+//		}else if(m_binaryCounter[2].counter < (0-thresh)){
+////			myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << "  BinaryCounter: " << m_binaryCounter[classID].counter << " MARK " << endl;
+//			booli=1;
+//			Mark (p);
+//			m_binaryCounter[2].counter=0;
+//		}else if(m_binaryCounter[3].counter < (0-thresh)){
+////			myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << "  BinaryCounter: " << m_binaryCounter[classID].counter << " MARK " << endl;
+//			booli=1;
+//			Mark (p);
+//			m_binaryCounter[3].counter=0;
+//		}
+
 	}
+
+//
+//	if (m_bytesInQueue + p->GetSize () >= m_th)
+//	{
+//		Mark (p);
+//	}
 
 //	if(classID < 100 && p->GetSize ()!=42 && m_isServer == 0){
 //
@@ -669,12 +705,12 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 
 
 
-	if (m_mode == QUEUE_MODE_BYTES && (m_bytesInQueue + p->GetSize () >= m_maxBytes))
-	{
-		cout<< " DROP " << endl;
-		Drop (p);
-		return false;
-	}
+//	if (m_mode == QUEUE_MODE_BYTES && (m_bytesInQueue + p->GetSize () >= m_maxBytes))
+//	{
+//		cout<< " DROP " << endl;
+//		Drop (p);
+//		return false;
+//	}
 
 
 	m_Qpackets.push(p);
