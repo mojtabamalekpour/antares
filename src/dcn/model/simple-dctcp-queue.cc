@@ -466,7 +466,7 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 			}else{
 				double d=(double)m_binaryCounter[classID].counter/(double)inBount;
 //				cout<< " =========== " << classID << " cntr " << m_binaryCounter[classID].counter << " inb " << (double)inBount << " d " << d << endl; 
-				if(d > 0.47){
+				if(d > 0.5){
 					Mark (p);
 // cout<< " MARK: " << Simulator::Now ().GetSeconds ()<< " classID " << classID <<" inBount: " << inBount <<  "  BinaryCounter1: " << m_binaryCounter[1].counter << "  BinaryCounter2: " << m_binaryCounter[2].counter << "  BinaryCounter3: " << m_binaryCounter[3].counter <<  endl;
 //					m_binaryCounter[classID].counter=0;
