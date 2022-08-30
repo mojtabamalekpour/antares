@@ -438,36 +438,60 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 	int32_t thresh=m_th;
 	int booli=0;
 
+//if (m_bytesInQueue + p->GetSize () >= m_th)
 
-	if(classID < 100 && p->GetSize ()!=42 && m_isServer == 0){
-		inBount+=p->GetSize();
-		if(inBount > DropThresh){
+	if(classID < 100 && p->GetSize ()!=42  && m_isServer == 0){
+		inBount+=1;
+		if(inBount >1000){
 			inBount=0;
+			m_binaryCounter[1].counter=0;
+                        m_binaryCounter[2].counter=0;
+                        m_binaryCounter[3].counter=0;
 		}
 
 
-		m_binaryCounter[classID].counter+=p->GetSize();
+		m_binaryCounter[classID].counter+=1;
 
 
 //		if(Simulator::Now ().GetDouble() > Seconds(0.05).GetDouble()){
-//					cout<< " TIME: " << Simulator::Now ().GetSeconds ()<< " inBount: " << inBount <<  "  BinaryCounter1: " << m_binaryCounter[1].counter << "  BinaryCounter2: " << m_binaryCounter[2].counter << "  BinaryCounter3: " << m_binaryCounter[3].counter <<  endl;
-//				}
+//			cout<< " TIME: " << Simulator::Now ().GetSeconds ()<< " inBount: " << inBount <<  "  BinaryCounter1: " << m_binaryCounter[1].counter << "  BinaryCounter2: " << m_binaryCounter[2].counter << "  BinaryCounter3: " << m_binaryCounter[3].counter <<  endl;
+//		}
+
+		if(inBount > 20 ){
+			if(inBount == m_binaryCounter[classID].counter){
+				inBount=0;
+				m_binaryCounter[1].counter=0;
+				m_binaryCounter[2].counter=0;
+				m_binaryCounter[3].counter=0;
+			}else{
+				double d=(double)m_binaryCounter[classID].counter/(double)inBount;
+//				cout<< " =========== " << classID << " cntr " << m_binaryCounter[classID].counter << " inb " << (double)inBount << " d " << d << endl; 
+				if(d > 0.47){
+					Mark (p);
+// cout<< " MARK: " << Simulator::Now ().GetSeconds ()<< " classID " << classID <<" inBount: " << inBount <<  "  BinaryCounter1: " << m_binaryCounter[1].counter << "  BinaryCounter2: " << m_binaryCounter[2].counter << "  BinaryCounter3: " << m_binaryCounter[3].counter <<  endl;
+//					m_binaryCounter[classID].counter=0;
+//				inBount=0;
+                                  m_binaryCounter[classID].counter=0;
+                           //     m_binaryCounter[1].counter=0;
+                           //     m_binaryCounter[2].counter=0;
+                           //     m_binaryCounter[3].counter=0;
+				}
 
 
-		if(inBount == m_binaryCounter[classID].counter && m_binaryCounter[classID].counter > 20000){
-			inBount=0;
-			m_binaryCounter[classID].counter=0;
+				if(inBount-m_binaryCounter[classID].counter < 50){
+  //      	              		Drop (p);
+//	                	      	m_binaryCounter[classID].counter=0;
+	                	}	
+			}
+
 		}
 
-
-
-
-		if(inBount-m_binaryCounter[classID].counter > thresh){
-			Mark (p);
-			m_binaryCounter[classID].counter=0;
-		}
-
-
+		
+		
+		
+		
+		
+		
 //		myfile << " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID << " mutex_1:2 " << m_binaryCounter[1].m_mutex_1<< ":" << m_binaryCounter[1].m_mutex_2 <<  "  BinaryCounter: " << m_binaryCounter[1].counter << " MARK " << endl;
 
 //		m_binaryCounter[1].counter+=p->GetSize();
@@ -611,9 +635,10 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 //		{
 //			myfile <<  " TIME: " << Simulator::Now ().GetSeconds () <<   " ClassID " << classID <<  " mutex1: " << m_binaryCounter[1].m_mutex_1 <<  ":" << m_binaryCounter[1].m_mutex_2 << " mutex2: " << m_binaryCounter[2].m_mutex_1 <<  ":" << m_binaryCounter[2].m_mutex_2 << "  BinaryCounter1: " << m_binaryCounter[1].counter<< "  BinaryCounter2: " << m_binaryCounter[2].counter << " Tresh " << thresh <<  " bytesInQueue " << m_bytesInQueue <<  endl;
 //		}
-//		if (m_bytesInQueue + p->GetSize () >= m_th)
+//		if (m_bytesInQueue + p->GetSize () >= m_th*1000)
 //		{
-//
+//Mark (p);
+//		}
 //			if((m_binaryCounter[1].m_mutex_2==1 && m_binaryCounter[1].m_mutex_1==1) || (m_binaryCounter[2].m_mutex_2==1 && m_binaryCounter[2].m_mutex_1==1)){
 //				if(m_binaryCounter[1].m_mutex_2==1 && m_binaryCounter[1].m_mutex_1==1){
 //					if(m_binaryCounter[1].counter > thresh && classID == 1 ){

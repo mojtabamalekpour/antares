@@ -12,7 +12,7 @@ do
 	t2=`cat $a | grep "TIME: $i" | grep "TENATNT: 2"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
 	t3=`cat $a | grep "TIME: $i" | grep "TENATNT: 3"  | cut -d " " -f 13 |awk '{sum+=$1}END{print sum}'`
 
-	echo $i $t1 $t2 $t3 >> /tmp/tt
+	echo $i $t1 $t2 $t3 >> /tmp/tt 
 done
 
 

@@ -281,7 +281,7 @@ Dctcp::CheckCe (Ipv4Header header)
           NS_LOG_LOGIC ("Sending immediate Ack because state changed to CE");
           SendEmptyPacket (TcpHeader::ACK , header.GetEcnCount ());
         }
-      
+
       m_ceState = true;
       m_ece = true;
     }

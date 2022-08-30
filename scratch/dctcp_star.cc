@@ -32,9 +32,9 @@ uint32_t        NumberofRacks             = 2;
 uint32_t        NumberofSpineSwitches     = 1;
 uint32_t        Scale                     = 1;
 double          load                      = 0.6;
-uint32_t        threshold                 = 2e5;
-uint32_t        queueBytes                = 4e5;      // Number of bytes per queue port
-uint32_t        initCwnd                  = 10;         // TCP Initial Congestion Window
+uint32_t        threshold                 = 4e6;
+uint32_t        queueBytes                = 4e7;      // Number of bytes per queue port
+uint32_t        initCwnd                  = 2;         // TCP Initial Congestion Window
 double          minRto                    = 10000e-6;
 uint32_t        segmentSize               = 1460;
 bool            LinkUtilization           = 0;
@@ -449,14 +449,14 @@ void Setup_Workload(){
 	int m_flow_counter=1;
 
 	////////////////////////////////////
-	double startTime=0;
-	double endTime=0.5;
+	double startTime=0.2;
+	double endTime=1.2;
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
 	////////////////////////////////////
-	startTime=0.1;
-	endTime=0.4;
+	startTime=0.4;
+	endTime=1;
 	m_tenant++;
 
 	m_flow_counter++;
@@ -468,8 +468,8 @@ void Setup_Workload(){
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
 	////////////////////////////////////
-	startTime=0.2;
-	endTime=0.3;
+	startTime=0.6;
+	endTime=0.8;
 	m_tenant++;
 	m_flow_counter++;
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
@@ -620,8 +620,8 @@ void SetupServer(Ptr<Node> rnode)
 		else{
 			Ptr<SimpleDCTCPQueue> dtqueue = queue->GetObject<SimpleDCTCPQueue>();
 			set_successful &= dtqueue->SetAttributeFailSafe("Mode",      EnumValue(DropTailQueue::QUEUE_MODE_BYTES));
-			set_successful &= dtqueue->SetAttributeFailSafe("MaxBytes",  UintegerValue(4 * 1024 * 1024)); //4 MB typical to accomodate
-			set_successful &= dtqueue->SetAttributeFailSafe("Th",      UintegerValue(4 * 1024 * 1024));
+			set_successful &= dtqueue->SetAttributeFailSafe("MaxBytes",  UintegerValue(0)); //4 MB typical to accomodate
+			set_successful &= dtqueue->SetAttributeFailSafe("Th",      UintegerValue(0));
 			set_successful &= dtqueue->SetAttributeFailSafe("IsServer",      UintegerValue(1));
 //			Simulator::Schedule(Seconds(0),&GetQueue,dtqueue);
 
