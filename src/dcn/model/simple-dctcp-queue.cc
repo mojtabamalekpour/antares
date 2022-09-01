@@ -471,7 +471,7 @@ SimpleDCTCPQueue::DoEnqueue (Ptr<Packet> p)
 			}
 
 		}
-
+	}
 	m_Qpackets.push(p);
 	m_bytesInQueue += p->GetSize ();
 	return true;

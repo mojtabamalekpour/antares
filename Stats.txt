@@ -1,0 +1,3 @@
+ --------------TIME: 0 Address: 02-06-00:00:00:00:00:02 PhysicalQLen 0 m_binaryCounter1 0 m_binaryCounter2 0 m_binaryCounter3 0
+ --------------TIME: 0.005 Address: 02-06-00:00:00:00:00:02 PhysicalQLen 0 m_binaryCounter1 13 m_binaryCounter2 0 m_binaryCounter3 0
+ --------------TIME: 0.01 Address: 02-06-00:00:00:00:00:02 PhysicalQLen 0 m_binaryCounter1 16 m_binaryCounter2 0 m_binaryCounter3 0
