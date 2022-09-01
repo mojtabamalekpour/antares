@@ -29,12 +29,12 @@ gnuplot -persist <<-EOFMarker
 set xlabel "Time (s)" 
 set ylabel "Throughput (Gbps)" 
 # set border 0
-set xtics nomirror 0.1
+set xtics nomirror 0.5
 # set ytics nomirror 2.5
 set grid
 set key outside center top samplen 2 spacing 1 maxrows 2 width -5
 set yrange [0:100]
-# set xrange [0:100]
+set xrange [0:2.5]
 set terminal pdf font "Helvetica,50" size 8,6.4
 set output "eval_convergence.pdf"
 set size ratio 0.6

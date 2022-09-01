@@ -13,6 +13,8 @@
 #include "ns3/dctcp-queue.h"
 
 
+#include <fstream>
+#include <iostream>
 
 
 
@@ -86,6 +88,8 @@ NS_LOG_COMPONENT_DEFINE ("DataCenterSimulator");
 
 std::map<Ptr<Socket>, Time> sockets;
 
+ofstream outfile;
+
 void QueuedPackets(uint32_t oldValue, uint32_t newValue)
 {
 	NS_LOG_INFO ("Packets in Queue at " << Simulator::Now ().GetSeconds ()<<"are \t"<<newValue);
@@ -106,14 +110,11 @@ void GetQueue(Ptr<SimpleDCTCPQueue> q)
 	Ptr<Node> rnode  = nLeaf[0];
 	Ptr<Ipv4L3Protocol> rnodeip = rnode->GetObject<Ipv4L3Protocol>();
 
-	for(int j = 1;j<14;j++){
-		Ptr<NetDevice> netdev = rnodeip->GetNetDevice(j);
-		Ptr<PointToPointNetDevice> ptpnetdev = netdev->GetObject<PointToPointNetDevice>();
-		Ptr<Queue> queue = ptpnetdev->GetQueue();
-		Ptr<SimpleDCTCPQueue> dtqueue = queue->GetObject<SimpleDCTCPQueue>();
-		if(dtqueue->m_bytesInQueue!=0)
-			std::cout << " --------------TIME: " << Simulator::Now ().GetSeconds ()  << " Address: " <<  ptpnetdev->GetAddress()<< " PhysicalQLen " << dtqueue->m_bytesInQueue << std::endl;
-	}
+	Ptr<NetDevice> netdev = rnodeip->GetNetDevice(1);
+	Ptr<PointToPointNetDevice> ptpnetdev = netdev->GetObject<PointToPointNetDevice>();
+	Ptr<Queue> queue = ptpnetdev->GetQueue();
+	Ptr<SimpleDCTCPQueue> dtqueue = queue->GetObject<SimpleDCTCPQueue>();
+	outfile << " --------------TIME: " << Simulator::Now ().GetSeconds ()  << " Address: " <<  ptpnetdev->GetAddress()<< " PhysicalQLen " << dtqueue->m_bytesInQueue << " m_binaryCounter1 " << dtqueue->m_binaryCounter[1].counter << " m_binaryCounter2 " << dtqueue->m_binaryCounter[2].counter<< " m_binaryCounter3 " << dtqueue->m_binaryCounter[3].counter << std::endl;
 	Simulator::Schedule(Seconds(0.005),&GetQueue,q);
 }
 
@@ -181,9 +182,6 @@ void Configure_Simulator(){
 	//  cout<<"Short Flow Size :"<<FlowSizeShort<<endl;
 	//  cout<<"Long Flow Size :"<<FlowSizeLong<<endl;
 
-	ofstream outfile;
-	outfile.open(StatsFileName.c_str());
-	outfile.close();
 
 	double minRtt = (8 * linkDelay);
 
@@ -298,14 +296,12 @@ void Build_Topology()
 
 
 
-//	Ptr<Ipv4L3Protocol> rnodeip = nLeaf[1]->GetObject<Ipv4L3Protocol>();
-//	Ptr<NetDevice> netdev = rnodeip->GetNetDevice(1);
-//	Ptr<PointToPointNetDevice> ptpnetdev = netdev->GetObject<PointToPointNetDevice>();
-//	Ptr<Queue> queue = ptpnetdev->GetQueue();
-//	Ptr<SimpleDCTCPQueue> dtqueue = queue->GetObject<SimpleDCTCPQueue>();
-//	dtqueue->setBinaryCounter(10);
-
-//	Simulator::Schedule(NanoSeconds(5),&GetQueue,dtqueue);
+	Ptr<Ipv4L3Protocol> rnodeip = nLeaf[0]->GetObject<Ipv4L3Protocol>();
+	Ptr<NetDevice> netdev = rnodeip->GetNetDevice(1);
+	Ptr<PointToPointNetDevice> ptpnetdev = netdev->GetObject<PointToPointNetDevice>();
+	Ptr<Queue> queue = ptpnetdev->GetQueue();
+	Ptr<SimpleDCTCPQueue> dtqueue = queue->GetObject<SimpleDCTCPQueue>();
+	Simulator::Schedule(Seconds(0),&GetQueue,dtqueue);
 
 
 
@@ -449,14 +445,14 @@ void Setup_Workload(){
 	int m_flow_counter=1;
 
 	////////////////////////////////////
-	double startTime=0.2;
-	double endTime=1.2;
+	double startTime=0;
+	double endTime=2.5;
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
 	////////////////////////////////////
-	startTime=0.4;
-	endTime=1;
+	startTime=0.5;
+	endTime=2;
 	m_tenant++;
 
 	m_flow_counter++;
@@ -468,8 +464,8 @@ void Setup_Workload(){
 	SetupClientTraffic(nEnd[m_flow_counter],nEnd[0],FlowSizeLong,2000+m_flow_counter,Seconds(startTime),Seconds(endTime),m_tenant,m_flow_counter);
 
 	////////////////////////////////////
-	startTime=0.6;
-	endTime=0.8;
+	startTime=1;
+	endTime=1.5;
 	m_tenant++;
 	m_flow_counter++;
 	SetupServerTraffic(nEnd[0],2000+m_flow_counter,Seconds(startTime),Seconds(endTime), m_tenant,m_flow_counter);
@@ -731,6 +727,7 @@ main (int argc, char *argv[])
 	LogComponentEnable ("DataCenterSimulator", LOG_ALL);
 	NS_LOG_INFO ("DataCenter Simulation");
 
+	outfile.open(StatsFileName.c_str());
 	Configure_Simulator();
 
 	Build_Topology();
@@ -757,6 +754,7 @@ main (int argc, char *argv[])
 	Simulator::Run();
 	Simulator::Destroy ();
 
+	outfile.close();
 	NS_LOG_INFO ("Simulation Finished");
 
 	return 0;

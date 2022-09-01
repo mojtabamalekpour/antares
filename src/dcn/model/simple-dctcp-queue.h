@@ -77,6 +77,7 @@ public:
 
   uint32_t m_bytesInQueue;
 
+  	BinaryCounter m_binaryCounter[10];
 //  std::list <uint32_t> m_activityMonitor;
 //  uint32_t m_bytesInQueue1;
 //  uint32_t m_bytesInQueue2;
@@ -113,7 +114,6 @@ protected:
   uint32_t m_th;
   uint32_t m_isServer;
 
-  	BinaryCounter m_binaryCounter[10];
   	uint32_t inBount;
   	std::ofstream myfile;
 
